@@ -1,0 +1,3 @@
+[submodule "Examples/WebGL_CommonModule"]
+	path = Examples/WebGL_CommonModule
+	url = https://github.com/jjr2930/WebGL_CommonModule.git
