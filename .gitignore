@@ -20,3 +20,5 @@
 /packages/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0
 *.user
 /.vs
+/Examples/bin
+/Examples/obj
