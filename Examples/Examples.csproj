@@ -34,6 +34,19 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TypeScriptTarget>ES2019</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -82,6 +95,8 @@
     <Content Include="002_ColorTriangle\Shaders\vertexShader.vert" />
     <Content Include="003_ColorCube\Shaders\fragmentShader.frag" />
     <Content Include="003_ColorCube\Shaders\vertexShader.vert" />
+    <Content Include="004_Matrix\Shaders\fragmentShader.frag" />
+    <Content Include="004_Matrix\Shaders\vertexShader.vert" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -96,10 +111,6 @@
     <TypeScriptCompile Include="002_ColorTriangle\main.ts" />
     <TypeScriptCompile Include="003_ColorCube\main.ts" />
     <TypeScriptCompile Include="004_Matrix\main.ts" />
-    <TypeScriptCompile Include="900_CommonModules\MathUtils.ts" />
-    <TypeScriptCompile Include="900_CommonModules\Matrix4x4.ts" />
-    <TypeScriptCompile Include="900_CommonModules\Quaternion.ts" />
-    <TypeScriptCompile Include="900_CommonModules\Vector3.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

@@ -22,3 +22,5 @@
 /.vs
 /Examples/bin
 /Examples/obj
+*.js
+*.map
