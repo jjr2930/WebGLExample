@@ -97,6 +97,8 @@
     <Content Include="003_ColorCube\Shaders\vertexShader.vert" />
     <None Include="004_Matrix\Shaders\fragmentShader.frag" />
     <None Include="004_Matrix\Shaders\vertexShader.vert" />
+    <Content Include="005_Texture\Shaders\fragmentShader.frag" />
+    <Content Include="005_Texture\Shaders\vertexShader.vert" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -111,6 +113,7 @@
     <TypeScriptCompile Include="002_ColorTriangle\main.ts" />
     <TypeScriptCompile Include="003_ColorCube\main.ts" />
     <TypeScriptCompile Include="004_Matrix\main.ts" />
+    <TypeScriptCompile Include="005_Texture\005_Texture.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

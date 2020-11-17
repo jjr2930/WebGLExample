@@ -14,7 +14,7 @@
 
     //load shader
     var vertexShaderText: string;
-    vertexShaderText = await fetch("Shaders/vertexShader.vert").then(res => res.text());
+    vertexShaderText = await fetch("002_ColorTriangle/Shaders/vertexShader.vert").then(res => res.text());
     console.log(vertexShaderText);
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, vertexShaderText);
@@ -25,7 +25,7 @@
     }
 
     var fragmentShaderText: string;
-    fragmentShaderText = await fetch("Shaders/fragmentShader.frag").then(res => res.text());
+    fragmentShaderText = await fetch("002_ColorTriangle/Shaders/fragmentShader.frag").then(res => res.text());
     console.log(fragmentShaderText);
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, fragmentShaderText);
