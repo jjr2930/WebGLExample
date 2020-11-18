@@ -28,8 +28,8 @@ window.onload = async function ()
         return;
     }
 
-    const vertexShader = await Utilities.CreateNewShader(gl, "005_Texture/Shaders/vertexShader.vert", gl.VERTEX_SHADER);
-    const fragmentShader = await Utilities.CreateNewShader(gl, "005_Texture/Shaders/fragmentShader.frag", gl.FRAGMENT_SHADER);
+    const vertexShader = await Utilities.CreateNewShader(gl, "006_Light/Shaders/vertexShader.vert", gl.VERTEX_SHADER);
+    const fragmentShader = await Utilities.CreateNewShader(gl, "006_Light/Shaders/fragmentShader.frag", gl.FRAGMENT_SHADER);
     const program = await Utilities.CreateNewProgram(gl, vertexShader, fragmentShader);
 
     //create cube vertex
@@ -105,7 +105,7 @@ window.onload = async function ()
     /*
      * mapping texture at here
      */
-    const cubeTexture = await Utilities.LoadTexture(gl, "005_Texture/Textures/brick1.jpg");
+    const cubeTexture = await Utilities.LoadTexture(gl, "006_Light/Textures/brick1.jpg");
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
     gl.uniform1i(gl.getUniformLocation(program, "fsInputTex"), 0);
@@ -147,20 +147,20 @@ window.onload = async function ()
 
         const viewMatrix = new Matrix4x4();
         const eyePosition = new Vector3(null);
-        eyePosition.Z -=3;
+        eyePosition.Z -= 3;
 
         viewMatrix.SetViewMatrix(eyePosition, Vector3.Zero, Vector3.Up);
-        
-        
+
+
         const projectionMatrix = new Matrix4x4();
 
         projectionMatrix.SetPerspectiveMatrix(100.0, canvas.width / canvas.height, 0.001, 1000);
-        
+
         gl.uniformMatrix4fv(worldMatrixUnifromLocation, false, worldMatrix.GetArray());
         gl.uniformMatrix4fv(viewMatrixUniformLocation, false, viewMatrix.GetArray());
         gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix.GetArray());
 
-        
+
         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
         window.requestAnimationFrame(animate);

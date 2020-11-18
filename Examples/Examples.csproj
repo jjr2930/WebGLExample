@@ -82,6 +82,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="005_Texture\Textures\brick1.jpg" />
+    <Content Include="006_Light\Textures\brick1.jpg" />
     <Content Include="index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -99,6 +101,8 @@
     <None Include="004_Matrix\Shaders\vertexShader.vert" />
     <Content Include="005_Texture\Shaders\fragmentShader.frag" />
     <Content Include="005_Texture\Shaders\vertexShader.vert" />
+    <Content Include="006_Light\Shaders\fragmentShader.frag" />
+    <Content Include="006_Light\Shaders\vertexShader.vert" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -114,6 +118,7 @@
     <TypeScriptCompile Include="003_ColorCube\main.ts" />
     <TypeScriptCompile Include="004_Matrix\main.ts" />
     <TypeScriptCompile Include="005_Texture\005_Texture.ts" />
+    <TypeScriptCompile Include="006_Light\006_Light.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
