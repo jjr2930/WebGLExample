@@ -105,10 +105,7 @@ window.onload = async function ()
     /*
      * mapping texture at here
      */
-    const cubeTexture = await Utilities.LoadTexture(gl, "005_Texture/Textures/brick1.jpg");
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
-    gl.uniform1i(gl.getUniformLocation(program, "fsInputTex"), 0);
+    await Utilities.LoadTexture(gl,program,"fsInputTex", "005_Texture/Textures/brick1.jpg");
 
     const worldMatrixUnifromLocation = gl.getUniformLocation(program, "worldMatrix");
     const viewMatrixUniformLocation = gl.getUniformLocation(program, "viewMatrix");
@@ -129,7 +126,7 @@ window.onload = async function ()
 
         const delta = time - oldTime;
         oldTime = time;
-        rotation += delta * 0.1;
+        rotation += delta * 0.01;
 
         if (rotation > 360.0)
             rotation = rotation % 360;

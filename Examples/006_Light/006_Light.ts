@@ -1,10 +1,7 @@
 ﻿import { Matrix4x4 } from "../WebGL_CommonModule/Matrix4x4.js"
 import { Vector3 } from "../WebGL_CommonModule/Vector3.js"
 import { Utilities } from "../WebGL_CommonModule/Utilities.js"
-
-const VERTEX_COUNT = 3;
-const COLOR_COUNT = 4;
-
+import { Color } from "../WebGL_CommonModule/Color.js"
 window.onload = async function ()
 {
     //create canvas
@@ -21,7 +18,7 @@ window.onload = async function ()
     canvas.width = 600;
     canvas.height = 400;
     //get webgl context
-    let gl = canvas.getContext('webgl');
+    const gl = canvas.getContext('webgl');
     if (null === gl)
     {
         alert("your browser not support webgl");
@@ -92,6 +89,20 @@ window.onload = async function ()
         0.0, 1.0, 1.0
     ];
 
+    const lightColor = new Color(1, 0, 0, 1);
+
+    const lightDir = new Vector3();
+    lightDir.Set(1, 1, 1);
+    lightDir.Normalize();
+
+    const specularPower = 5.0;
+
+    const ambientColor = new Color(1, 1, 1, 1);
+
+    const camViewDir = new Vector3();
+    camViewDir.Set(0, 0, -1);
+    
+
     const [vertexBuffer, positionAttributeLoctaion] =
         Utilities.CreateArrayBuffer(gl, program, "vsInputPosition", 3, vertices);
 
@@ -105,14 +116,18 @@ window.onload = async function ()
     /*
      * mapping texture at here
      */
-    const cubeTexture = await Utilities.LoadTexture(gl, "006_Light/Textures/brick1.jpg");
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
-    gl.uniform1i(gl.getUniformLocation(program, "fsInputTex"), 0);
+    const cubeTexture = await Utilities.LoadTexture(gl, program, "fsInputTex", "006_Light/Textures/brick1.jpg");
+    
 
     const worldMatrixUnifromLocation = gl.getUniformLocation(program, "worldMatrix");
     const viewMatrixUniformLocation = gl.getUniformLocation(program, "viewMatrix");
     const projectionUniformLocation = gl.getUniformLocation(program, "projectionMatrix");
+    const lightColorUniformLocation = gl.getUniformLocation(program, "lightColor");
+    const worldLightDirUniformLocation = gl.getUniformLocation(program, "worldLightDir");
+    const diffuseColorUniformLocation = gl.getUniformLocation(program, "diffuseColor");
+    const specularPowerUniformLocation = gl.getUniformLocation(program, "specularPower");
+    const ambientColorUniformLocation = gl.getUniformLocation(program, "ambientColor");
+    const worldViewDirUniformLocation = gl.getUniformLocation(program, "worldViewDir");
 
     gl.useProgram(program);
     let rotation = 0.0;
@@ -159,7 +174,12 @@ window.onload = async function ()
         gl.uniformMatrix4fv(worldMatrixUnifromLocation, false, worldMatrix.GetArray());
         gl.uniformMatrix4fv(viewMatrixUniformLocation, false, viewMatrix.GetArray());
         gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix.GetArray());
-
+        gl.uniform4f(lightColorUniformLocation, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
+        gl.uniform3f(worldLightDirUniformLocation, lightDir.X, lightDir.Y, lightDir.Z);
+        gl.uniform4f(diffuseColorUniformLocation, lightColor.r, lightColor.g, lightColor.b, lightColor.a);
+        gl.uniform1f(specularPowerUniformLocation, specularPower);
+        gl.uniform4f(ambientColorUniformLocation, ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a);
+        gl.uniform3f(worldViewDirUniformLocation, camViewDir.X, camViewDir.Y, camViewDir.Z);
 
         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
