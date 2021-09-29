@@ -12,7 +12,8 @@ uniform vec3 worldLightDir;
 
 varying vec3 fsInputColor;
 varying vec2 fsInputTexCoord;
-varying vec4 fsInputWorldNormal;
+varying vec3 fsInputWorldNormal;
+varying vec3 fsInputWorldViewDir;
 
 void main()
 {
@@ -20,9 +21,9 @@ void main()
 	vec4 normal = vec4(vsInputNormal,1.0);
 	gl_Position = projectionMatrix * viewMatrix * worldMatrix * localPos;
 	
-	fsInputWorldNormal = worldMatrix * normal;
+	fsInputWorldNormal = (worldMatrix * normal).xyz;
 
 	fsInputColor = vsInputColor;
 	fsInputTexCoord = vsInputTexCoord;
-	fsInputWorldViewDir = norm(vsWorldViewDir);
+	fsInputWorldViewDir = normalize(vsWorldViewDir);
 }

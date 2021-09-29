@@ -2,6 +2,8 @@
 import { Vector3 } from "../WebGL_CommonModule/Vector3.js"
 import { Utilities } from "../WebGL_CommonModule/Utilities.js"
 import { Color } from "../WebGL_CommonModule/Color.js"
+import { Cube } from "../WebGL_CommonModule/Primitive/Cube.js"
+
 window.onload = async function ()
 {
     //create canvas
@@ -29,90 +31,34 @@ window.onload = async function ()
     const fragmentShader = await Utilities.CreateNewShader(gl, "006_Light/Shaders/fragmentShader.frag", gl.FRAGMENT_SHADER);
     const program = await Utilities.CreateNewProgram(gl, vertexShader, fragmentShader);
 
-    //create cube vertex
-    const vertices = [
-        // front
-        -1.0, -1.0, 1.0,
-        1.0, -1.0, 1.0,
-        1.0, 1.0, 1.0,
-        -1.0, 1.0, 1.0,
-        // back
-        -1.0, -1.0, -1.0,
-        1.0, -1.0, -1.0,
-        1.0, 1.0, -1.0,
-        -1.0, 1.0, -1.0
-    ];
+    let cube = new Cube(1, 1, 1);
 
-    const uvs = [
-        1.0, 1.0,
-        0.0, 1.0,
-        0.0, 0.0,
-        1.0, 0.0,
+    const lightColor = new Color(1, 1, 0, 1);
 
-        1.0, 1.0,
-        0.0, 1.0,
-        0.0, 0.0,
-        1.0, 0.0
-    ];
-
-    const indices = [
-        // front
-        0, 1, 2,
-        2, 3, 0,
-        // right
-        1, 5, 6,
-        6, 2, 1,
-        // back
-        7, 6, 5,
-        5, 4, 7,
-        // left
-        4, 0, 3,
-        3, 7, 4,
-        // bottom
-        4, 5, 1,
-        1, 0, 4,
-        // top
-        3, 2, 6,
-        6, 7, 3
-    ]
-
-    const colors = [
-        // front colors
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 1.0, 1.0,
-        // back colors
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 1.0, 1.0
-    ];
-
-    const lightColor = new Color(1, 0, 0, 1);
-
-    const lightDir = new Vector3();
-    lightDir.Set(1, 1, 1);
+    const lightDir = new Vector3(1, 0, 0);
     lightDir.Normalize();
 
     const specularPower = 5.0;
 
-    const ambientColor = new Color(1, 1, 1, 1);
+    const ambientColor = new Color(1, 0, 0, 1);
 
     const camViewDir = new Vector3();
-    camViewDir.Set(0, 0, -1);
-    
+    camViewDir.Set(1, 1, 1);
+
 
     const [vertexBuffer, positionAttributeLoctaion] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputPosition", 3, vertices);
+        Utilities.CreateArrayBuffer(gl, program, "vsInputPosition", 3, cube.GetVertices());
 
     const [colorBuffer, colorAttributeLocation] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputColor", 3, colors);
+        Utilities.CreateArrayBuffer(gl, program, "vsInputColor", 3, cube.GetColors());
 
     const [uvBuffer, uvAttributeLocation] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputTexCoord", 2, uvs);
+        Utilities.CreateArrayBuffer(gl, program, "vsInputTexCoord", 2, cube.GetUVs());
 
-    const indexBuffer = Utilities.CreateIndexBufferU16(gl, indices);
+    const [normalBuffer, normalAttributeLocation] =
+        Utilities.CreateArrayBuffer(gl, program, "vsInputNormal", 3, cube.GetNormals());
+
+    const indexBuffer = Utilities.CreateIndexBufferU16(gl, cube.Indices);
     /*
      * mapping texture at here
      */
@@ -145,6 +91,7 @@ window.onload = async function ()
         const delta = time - oldTime;
         oldTime = time;
         rotation += delta * 0.1;
+        //rotation = 45;
 
         if (rotation > 360.0)
             rotation = rotation % 360;
@@ -156,9 +103,12 @@ window.onload = async function ()
         worldMatrix.TranslateXYZ(0, 0, 0);
         worldMatrix.ScaleXYZ(1, 1, 1);
 
-        const rotMatrix = new Matrix4x4();
-        rotMatrix.RotateAxis(rotation, Vector3.Up);
-        worldMatrix.Mul(rotMatrix);
+        const rotMatrixY = new Matrix4x4();
+        const rotMatrixX = new Matrix4x4();
+        rotMatrixX.RotateAxis(rotation * 0.5, Vector3.Right);
+        rotMatrixY.RotateAxis(rotation, Vector3.Up);
+        worldMatrix.Mul(rotMatrixX);
+        worldMatrix.Mul(rotMatrixY);
 
         const viewMatrix = new Matrix4x4();
         const eyePosition = new Vector3(null);
@@ -171,17 +121,18 @@ window.onload = async function ()
 
         projectionMatrix.SetPerspectiveMatrix(100.0, canvas.width / canvas.height, 0.001, 1000);
 
+        var diffuseColor = new Color(1, 0, 0, 1);
         gl.uniformMatrix4fv(worldMatrixUnifromLocation, false, worldMatrix.GetArray());
         gl.uniformMatrix4fv(viewMatrixUniformLocation, false, viewMatrix.GetArray());
         gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix.GetArray());
-        gl.uniform4f(lightColorUniformLocation, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
+        gl.uniform4f(lightColorUniformLocation, lightColor.r, lightColor.g, lightColor.b, lightColor.a);
         gl.uniform3f(worldLightDirUniformLocation, lightDir.X, lightDir.Y, lightDir.Z);
-        gl.uniform4f(diffuseColorUniformLocation, lightColor.r, lightColor.g, lightColor.b, lightColor.a);
+        gl.uniform4f(diffuseColorUniformLocation, diffuseColor.r, diffuseColor.g, diffuseColor.b, diffuseColor.a);
         gl.uniform1f(specularPowerUniformLocation, specularPower);
         gl.uniform4f(ambientColorUniformLocation, ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a);
         gl.uniform3f(worldViewDirUniformLocation, camViewDir.X, camViewDir.Y, camViewDir.Z);
 
-        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, cube.Indices.length, gl.UNSIGNED_SHORT, 0);
 
         window.requestAnimationFrame(animate);
     }
