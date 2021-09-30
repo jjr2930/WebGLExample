@@ -2,7 +2,9 @@
 import { Vector3 } from "../WebGL_CommonModule/Vector3.js"
 import { Utilities } from "../WebGL_CommonModule/Utilities.js"
 import { Color } from "../WebGL_CommonModule/Color.js"
-import { Cube } from "../WebGL_CommonModule/Primitive/Cube.js"
+import { Sphere } from "../WebGL_CommonModule/Primitive/Sphere.js"
+import { Quaternion } from "../WebGL_CommonModule/Quaternion.js"
+import { MathUtils } from "../WebGL_CommonModule/MathUtils.js"
 
 window.onload = async function ()
 {
@@ -31,14 +33,14 @@ window.onload = async function ()
     const fragmentShader = await Utilities.CreateNewShader(gl, "006_Light/Shaders/fragmentShader.frag", gl.FRAGMENT_SHADER);
     const program = await Utilities.CreateNewProgram(gl, vertexShader, fragmentShader);
 
-    let cube = new Cube(1, 1, 1);
+    let sphere = new Sphere(40, 40);
 
     const lightColor = new Color(1, 1, 0, 1);
 
-    const lightDir = new Vector3(1, 0, 0);
+    let lightDir = new Vector3(0, 0, 1);
     lightDir.Normalize();
 
-    const specularPower = 5.0;
+    const specularPower = 1;
 
     const ambientColor = new Color(1, 0, 0, 1);
 
@@ -47,18 +49,18 @@ window.onload = async function ()
 
 
     const [vertexBuffer, positionAttributeLoctaion] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputPosition", 3, cube.GetVertices());
+        Utilities.CreateArrayBuffer(gl, program, "vsInputPosition", 3, sphere.GetVertices());
 
     const [colorBuffer, colorAttributeLocation] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputColor", 3, cube.GetColors());
+        Utilities.CreateArrayBuffer(gl, program, "vsInputColor", 3, sphere.GetColors());
 
     const [uvBuffer, uvAttributeLocation] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputTexCoord", 2, cube.GetUVs());
+        Utilities.CreateArrayBuffer(gl, program, "vsInputTexCoord", 2, sphere.GetUVs());
 
     const [normalBuffer, normalAttributeLocation] =
-        Utilities.CreateArrayBuffer(gl, program, "vsInputNormal", 3, cube.GetNormals());
+        Utilities.CreateArrayBuffer(gl, program, "vsInputNormal", 3, sphere.GetNormals());
 
-    const indexBuffer = Utilities.CreateIndexBufferU16(gl, cube.Indices);
+    const indexBuffer = Utilities.CreateIndexBufferU16(gl, sphere.Indices);
     /*
      * mapping texture at here
      */
@@ -93,29 +95,28 @@ window.onload = async function ()
         rotation += delta * 0.1;
         //rotation = 45;
 
-        if (rotation > 360.0)
-            rotation = rotation % 360;
-        if (rotation < 0)
-            rotation = 0;
+        //if (rotation > 360.0)
+        //    rotation = rotation % 360;
+        //if (rotation < 0)
+        //    rotation = 0;
 
         const worldMatrix = new Matrix4x4();
         worldMatrix.SetIdentity();
         worldMatrix.TranslateXYZ(0, 0, 0);
         worldMatrix.ScaleXYZ(1, 1, 1);
 
-        const rotMatrixY = new Matrix4x4();
-        const rotMatrixX = new Matrix4x4();
-        rotMatrixX.RotateAxis(rotation * 0.5, Vector3.Right);
-        rotMatrixY.RotateAxis(rotation, Vector3.Up);
-        worldMatrix.Mul(rotMatrixX);
-        worldMatrix.Mul(rotMatrixY);
+        //const rotMatrixY = new Matrix4x4();
+        //const rotMatrixX = new Matrix4x4();
+        //rotMatrixX.RotateAxis(rotation * 0.5, Vector3.Right);
+        //rotMatrixY.RotateAxis(rotation, Vector3.Up);
+        //worldMatrix.Mul(rotMatrixX);
+        //worldMatrix.Mul(rotMatrixY);
 
         const viewMatrix = new Matrix4x4();
         const eyePosition = new Vector3(null);
         eyePosition.Z -= 3;
 
         viewMatrix.SetViewMatrix(eyePosition, Vector3.Zero, Vector3.Up);
-
 
         const projectionMatrix = new Matrix4x4();
 
@@ -126,13 +127,13 @@ window.onload = async function ()
         gl.uniformMatrix4fv(viewMatrixUniformLocation, false, viewMatrix.GetArray());
         gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix.GetArray());
         gl.uniform4f(lightColorUniformLocation, lightColor.r, lightColor.g, lightColor.b, lightColor.a);
-        gl.uniform3f(worldLightDirUniformLocation, lightDir.X, lightDir.Y, lightDir.Z);
+        gl.uniform3f(worldLightDirUniformLocation, lightDir.X, lightDir.Y , lightDir.Z);
         gl.uniform4f(diffuseColorUniformLocation, diffuseColor.r, diffuseColor.g, diffuseColor.b, diffuseColor.a);
         gl.uniform1f(specularPowerUniformLocation, specularPower);
         gl.uniform4f(ambientColorUniformLocation, ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a);
         gl.uniform3f(worldViewDirUniformLocation, camViewDir.X, camViewDir.Y, camViewDir.Z);
 
-        gl.drawElements(gl.TRIANGLES, cube.Indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, sphere.Indices.length, gl.UNSIGNED_SHORT, 0);
 
         window.requestAnimationFrame(animate);
     }

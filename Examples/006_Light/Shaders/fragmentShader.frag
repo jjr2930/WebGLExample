@@ -14,17 +14,17 @@ varying vec3 fsInputWorldNormal;
 
 void main()
 {
-	vec4 ambientColor = vec4(0.2, 0.2, 0.2, 1.0);
+	vec4 ambientColor = vec4(0.1, 0.2, 0.1, 1.0);
 	float diffuseAmount = max(dot(fsInputWorldNormal, worldLightDir), 0.0);
-
-	vec3 reflectDir = reflect(-worldLightDir,fsInputWorldNormal);
-	float reflectAmount = dot(worldViewDir, reflectDir);
-	reflectAmount = max(reflectAmount, 0.0);
-	reflectAmount = pow(reflectAmount,specularPower);
-	vec4 specularColor = reflectAmount * lightColor;
 
 	vec4 texColor = texture2D(fsInputTex, fsInputTexCoord); 
 	vec4 diffuse = (lightColor * diffuseAmount);
-	
-	gl_FragColor =  ambientColor + diffuse * texColor;
+
+	vec3 reflectDir = reflect(-worldLightDir,fsInputWorldNormal);
+	float reflectAmount = clamp(dot(worldViewDir, reflectDir), 0.0, 1.0);
+	reflectAmount = max(reflectAmount, 0.0);
+	reflectAmount = pow(reflectAmount , specularPower);
+	vec4 specularColor = reflectAmount * lightColor;
+		
+	gl_FragColor = ambientColor + diffuse + specularColor;
 }
